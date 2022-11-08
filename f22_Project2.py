@@ -75,7 +75,11 @@ def get_listing_information(listing_id):
         pType = "Shared Room"
     else:
         pType = "Entire Room"
-    bedrooms = int(soup.find_all("li", class_="l7n4lsf dir dir-ltr")[1].text[3])
+    bedrooms = soup.find_all("li", class_="l7n4lsf dir dir-ltr")[1].text[3]
+    if bedrooms == 'S':
+        bedrooms = 1
+    else:
+        bedrooms = int(bedrooms)
     tup = (policy, pType, bedrooms)
     return tup
 
@@ -94,7 +98,20 @@ def get_detailed_listing_database(html_file):
         ...
     ]
     """
-    pass
+
+    res = []
+    listings = get_listings_from_search_results(html_file)
+    for listing in listings:
+        title = listing[0]
+        price = listing[1]
+        id = listing[2]
+        info = get_listing_information(id)
+        policy = info[0]
+        ptype = info[1]
+        bedrooms = info[2]
+        tup = (title, price, id, policy, ptype, bedrooms)
+        res.append(tup)
+    return res
 
 
 def write_csv(data, filename):
@@ -220,36 +237,39 @@ class TestCases(unittest.TestCase):
             # assert each item in the list of listings is a tuple
             self.assertEqual(type(item), tuple)
             # check that each tuple has a length of 6
+            self.assertEqual(len(item), 6)
 
         # check that the first tuple is made up of the following:
         # 'Loft in Mission District', 210, '1944564', '2022-004088STR', 'Entire Room', 1
+        self.assertEqual(detailed_database[0], ('Loft in Mission District', 210, '1944564', '2022-004088STR', 'Entire Room', 1))
 
         # check that the last tuple is made up of the following:
         # 'Guest suite in Mission District', 238, '32871760', 'STR-0004707', 'Entire Room', 1
+        self.assertEqual(detailed_database[19], ('Guest suite in Mission District', 238, '32871760', 'STR-0004707', 'Entire Room', 1))
 
         pass
 
-    # def test_write_csv(self):
-    #     # call get_detailed_listing_database on "html_files/mission_district_search_results.html"
-    #     # and save the result to a variable
-    #     detailed_database = get_detailed_listing_database("html_files/mission_district_search_results.html")
-    #     # call write csv on the variable you saved
-    #     write_csv(detailed_database, "test.csv")
-    #     # read in the csv that you wrote
-    #     csv_lines = []
-    #     with open(os.path.join(os.path.abspath(os.path.dirname(__file__)), 'test.csv'), 'r') as f:
-    #         csv_reader = csv.reader(f)
-    #         for i in csv_reader:
-    #             csv_lines.append(i)
-    #     # check that there are 21 lines in the csv
-    #     self.assertEqual(len(csv_lines), 21)
-    #     # check that the header row is correct
+    def test_write_csv(self):
+        # call get_detailed_listing_database on "html_files/mission_district_search_results.html"
+        # and save the result to a variable
+        detailed_database = get_detailed_listing_database("html_files/mission_district_search_results.html")
+        # call write csv on the variable you saved
+        write_csv(detailed_database, "test.csv")
+        # read in the csv that you wrote
+        csv_lines = []
+        with open(os.path.join(os.path.abspath(os.path.dirname(__file__)), 'test.csv'), 'r') as f:
+            csv_reader = csv.reader(f)
+            for i in csv_reader:
+                csv_lines.append(i)
+        # check that there are 21 lines in the csv
+        self.assertEqual(len(csv_lines), 21)
+        # check that the header row is correct
 
-    #     # check that the next row is Private room in Mission District,82,51027324,Pending,Private Room,1
+        # check that the next row is Private room in Mission District,82,51027324,Pending,Private Room,1
 
-    #     # check that the last row is Apartment in Mission District,399,28668414,Pending,Entire Room,2
+        # check that the last row is Apartment in Mission District,399,28668414,Pending,Entire Room,2
 
-    #     pass
+        pass
 
     # def test_check_policy_numbers(self):
     #     # call get_detailed_listing_database on "html_files/mission_district_search_results.html"
