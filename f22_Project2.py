@@ -68,10 +68,14 @@ def get_listing_information(listing_id):
     file = "html_files/listing_" + listing_id + ".html"
     soup = BeautifulSoup(open(file), 'html.parser')
     policy = soup.find("li", class_="f19phm7j dir dir-ltr").text[15:]
+    if re.search("pending|Pending", policy):
+        policy = "Pending"
+    elif re.search("OSTR", policy):
+        policy = "Exempt"
     placetypeStr = soup.find("meta", property="og:description").attrs["content"]
-    if re.match("private|Private", placetypeStr):
+    if re.search("^(private|Private)", placetypeStr):
         pType = "Private Room"
-    elif re.match("shared|Shared", placetypeStr):
+    elif re.search("shared|Shared", placetypeStr):
         pType = "Shared Room"
     else:
         pType = "Entire Room"
@@ -136,7 +140,13 @@ def write_csv(data, filename):
 
     This function should not return anything.
     """
-    pass
+
+    data = sorted(data, key=lambda x: x[1])
+    f = open(filename, 'w')
+    f.write("Listing Title,Cost,Listing ID,Policy Number,Place Type,Number of Bedrooms\n")
+    for listing in data:
+        f.write(listing[0] + "," + str(listing[1]) + "," + listing[2] + "," + listing[3] + "," + listing[4] + "," + str(listing[5]) + "\n")
+    f.close()
 
 
 def check_policy_numbers(data):
@@ -264,10 +274,15 @@ class TestCases(unittest.TestCase):
         # check that there are 21 lines in the csv
         self.assertEqual(len(csv_lines), 21)
         # check that the header row is correct
-
+        csv0 = csv_lines[0][0] + "," + csv_lines[0][1] + "," + csv_lines[0][2] + "," + csv_lines[0][3] + "," + csv_lines[0][4] + "," + csv_lines[0][5]
+        self.assertEqual(csv0, "Listing Title,Cost,Listing ID,Policy Number,Place Type,Number of Bedrooms")
         # check that the next row is Private room in Mission District,82,51027324,Pending,Private Room,1
+        csv1 = csv_lines[1][0] + "," + csv_lines[1][1] + "," + csv_lines[1][2] + "," + csv_lines[1][3] + "," + csv_lines[1][4] + "," + csv_lines[1][5]
+        self.assertEqual(csv1, "Private room in Mission District,82,51027324,Pending,Private Room,1")
 
         # check that the last row is Apartment in Mission District,399,28668414,Pending,Entire Room,2
+        csv20 = csv_lines[20][0] + "," + csv_lines[20][1] + "," + csv_lines[20][2] + "," + csv_lines[20][3] + "," + csv_lines[20][4] + "," + csv_lines[20][5]
+        self.assertEqual(csv20, "Apartment in Mission District,399,28668414,Pending,Entire Room,2")
 
         pass
 
