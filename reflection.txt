@@ -1,0 +1,25 @@
+a. If I was a software developer at Airbnb, a different system I could use to verify the business
+license is valid in short term rentals is to not allow a new listing to be posted on Airbnb unless it is
+confirmed by Airbnb that the business license is valid. One argument I might hear at Airbnb for adopting 
+this system is that this will take a lot of extra time for Airbnb, time that could be better spent
+working on our business product. Another argument I might hear at Airbnb is that an invalid business
+license may be against the law, but would only help Airbnb make more money, so we should not be too 
+concerned if our existing system lets some unregistered listings get through without us knowing. 
+
+b. We could use our database to compare average price of a household by state, and then compare this 
+to the total housing insecure households percentage on the wikipedia page, to see if there is a 
+correlation between housing prices and housing insecurity, or if other factors are better determinations.
+
+c. When discussing the legality of web scraping, I think one factor that is important to consider is 
+accountability. Many critical resources such as housing opportunities and job applications are becoming
+governed by machine learning techniques and complex algorithms. It is important that data scientists and
+other members of the general public are allowed to test these computational methods for intentional or
+unintentional discrimination. This is a crucial topic for maintaining transparency and accountability in
+an increasingly digitalized world.
+
+d. One important factor when considering whether or not to use public data is anonymity. It is never ethical
+to use web scraping to find data about specific people, unless explicit permission is given. Another 
+factor to consider is the resource that the data is coming from. I believe that it is more ethical
+to scrape data from a trusted source such as a government website, where all the information is
+made to be public, rather than some private company where people may not know there information is
+out there to be tracked.
